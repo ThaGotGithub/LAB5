@@ -253,12 +253,13 @@ void Mode() {
 			UIsend("a : Speed Up +1Hz\r\n");
 			UIsend("s : Speed Down -1Hz\r\n");
 			UIsend("d : On/Off\r\n");
-			//UIsend("x : back\r\n");
+			UIsend("x : back\r\n");
 		} else if (RxBuffer[0] == 49) {
 			State = 1;
 			step = 1;
 			UIsend("Button Status Mode\r\n");
 		}
+		else UIsend("Input ERROR\r\n");
 		break;
 	case 0:
 		if (RxBuffer[0] == 97)
@@ -266,18 +267,19 @@ void Mode() {
 		else if (RxBuffer[0] == 115 && Hz > 1)
 			Hz = Hz - 1;
 		else if (RxBuffer[0] == 100) {
-			if ((LEDOnOff + 1) / 1 == 1)
+			if (LEDOnOff == 0)
 				LEDOnOff = 1;
 			else
 				LEDOnOff = 0;
-		} else if (RxBuffer[0] == 120)
+		} else if (RxBuffer[0] == 120) {
 			State = 2;
+			step = 1;
+		}
 		if (LEDOnOff) {
 			sprintf((char*) textbox, "Hz : %d\r\n", Hz);
 			UIsend(textbox);
-		}
-		else UIsend("LED OFF\r\n");
-
+		} else
+			UIsend("LED OFF\r\n");
 		break;
 	case 1:
 		step = 1;
@@ -316,9 +318,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 void ButtonQC() {
 	Button[0] = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
 	if (Button[0] == 1 && Button[1] == 0)
-		UIsend("unpress\r\n");
+		UIsend("-->  unpress\r\n");
 	else if (Button[0] == 0 && Button[1] == 1)
-		UIsend("press\r\n");
+		UIsend("-->  press\r\n");
 	Button[1] = Button[0];
 }
 /* USER CODE END 4 */
